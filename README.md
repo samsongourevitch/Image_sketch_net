@@ -1,7 +1,7 @@
-## Object recognition and computer vision 2023/2024
+## Object recognition and computer vision 2024/2025
 
 ### Assignment 3: Sketch image classification
-[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1E79WhvuiNhEGt840ZV_491h2WvPfh73Z)
+[![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1PxshEMwNm4tLu8f_Bz_Z0emUlC1TPob4?usp=sharing)
 #### Requirements
 1. Install PyTorch from http://pytorch.org
 
@@ -13,7 +13,7 @@ pip install -r requirements.txt
 
 #### Dataset
 We will be using a dataset containing 250 different classes of sketches adapted from the [classifysketch dataset](https://cybertron.cg.tu-berlin.de/eitz/projects/classifysketch/).
-Download the training/validation/test images from [here](https://www.kaggle.com/competitions/mva-recvis-2023/data). The test image labels are not provided.
+Download the training/validation/test images from [here](https://www.kaggle.com/competitions/mva-recvis-2024/data). The test image labels are not provided.
 
 #### Training and validating your model
 Run the script `main.py` to train your model.
