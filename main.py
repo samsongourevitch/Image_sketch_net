@@ -4,9 +4,7 @@ import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.autograd import Variable
 from torchvision import datasets
-from tqdm import tqdm
 
 from model_factory import ModelFactory
 
