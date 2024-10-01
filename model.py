@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-nclasses = 250
+nclasses = 500
 
 
 class Net(nn.Module):

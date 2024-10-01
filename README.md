@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ```
 
 #### Dataset
-We will be using a dataset containing 250 different classes of sketches adapted from the [classifysketch dataset](https://cybertron.cg.tu-berlin.de/eitz/projects/classifysketch/).
+We will be using a dataset containing 500 different classes of sketches adapted from the [ImageNet Sketch](https://github.com/HaohanWang/ImageNet-Sketch).
 Download the training/validation/test images from [here](https://www.kaggle.com/competitions/mva-recvis-2024/data). The test image labels are not provided.
 
 #### Training and validating your model
