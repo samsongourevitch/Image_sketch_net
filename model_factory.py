@@ -1,6 +1,7 @@
 """Python file to instantite the model and the transform that goes with it."""
-from model import Net
+
 from data import data_transforms
+from model import Net
 
 
 class ModelFactory:
