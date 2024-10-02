@@ -79,7 +79,7 @@ def main() -> None:
                 data = data.cuda()
             output = model(data)
             pred = output.data.max(1, keepdim=True)[1]
-            output_file.write("%s,%d\n" % (f[:-4], pred))
+            output_file.write("%s,%d\n" % (f[:-5], pred))
 
     output_file.close()
 
