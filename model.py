@@ -46,7 +46,7 @@ class Resnet_based(nn.Module):
         # Load a pre-trained ResNet-50 model
         self.model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
 
-        for param in list(self.model.parameters())[:-2]:
+        for param in list(self.model.parameters()):
             param.requires_grad = False
         
         # Replace the final fully connected layer for the specific number of classes
