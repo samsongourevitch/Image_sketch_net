@@ -16,7 +16,6 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "sketch_classifier":
-            print("Feature extractor path: ", self.feature_extractor_path)
             return SketchClassifier(self.feature_extractor_path)
         else:
             raise NotImplementedError("Model not implemented")
