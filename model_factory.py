@@ -2,7 +2,6 @@
 
 from data import data_transforms, data_transforms_resnet
 from model import Net, Resnet_based, SketchClassifier
-from torchvision import models
 import torch
 
 class ModelFactory:
@@ -20,22 +19,20 @@ class ModelFactory:
             return Resnet_based()
         elif self.model_name == "sketch_classifier":
             # Load the pre-trained ResNet-50 model structure
-            resnet = models.resnet50()
+            model = Resnet_based()
             if self.use_cuda:
                 map_location = lambda storage, loc: storage.cuda()
             else:
                 map_location = 'cpu'
-            resnet.load_state_dict(torch.load(self.feature_extractor_path, map_location=map_location))
+            model.load_state_dict(torch.load(self.feature_extractor_path, map_location=map_location))
             # Remove the last layer
-            feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+            feature_extractor = torch.nn.Sequential(*(list(model.children())[:-1]))
             return SketchClassifier(feature_extractor)
         else:
             raise NotImplementedError("Model not implemented")
 
     def init_transform(self):
         if self.model_name == "basic_cnn":
-            return data_transforms
-        elif self.model_name == "basic_cnn2":
             return data_transforms
         elif self.model_name == "resnet_based":
             return data_transforms_resnet
