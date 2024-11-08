@@ -44,7 +44,7 @@ class SketchClassifier(nn.Module):
         super(SketchClassifier, self).__init__()
         self.feature_extractor = feature_extractor
         # Our classifier model
-        self.fc1 = nn.Linear(2048, 512)  # Input size is 2048 from ResNet-50's feature map
+        self.fc1 = nn.Linear(feature_extractor.fc.in_features, 512)  # Input layer
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)   # Dropout for regularization
         self.fc2 = nn.Linear(512, nclasses)  # Output layer for class prediction
