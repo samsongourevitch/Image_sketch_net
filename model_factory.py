@@ -27,6 +27,8 @@ class ModelFactory:
             model.load_state_dict(torch.load(self.feature_extractor_path, map_location=map_location))
             # Remove the last layer
             feature_extractor = torch.nn.Sequential(*(list(model.children())[:-1]))
+            for param in feature_extractor.parameters():
+                param.requires_grad = False
             return SketchClassifier(feature_extractor)
         else:
             raise NotImplementedError("Model not implemented")
