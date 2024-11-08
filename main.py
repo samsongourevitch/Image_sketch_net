@@ -78,6 +78,11 @@ def opts() -> argparse.ArgumentParser:
         metavar="NW",
         help="number of workers for data loading",
     )
+    parser.add_argument(
+        "--feature_extractor_path",
+        default=None,
+        help="model usinng to extract features",
+    )
     args = parser.parse_args()
     return args
 
@@ -189,7 +194,7 @@ def main():
         os.makedirs(args.experiment)
 
     # load model and transform
-    model, data_transforms = ModelFactory(args.model_name).get_all()
+    model, data_transforms = ModelFactory(args.model_name, args.feature_extractor_path).get_all()
     if use_cuda:
         print("Using GPU")
         model.cuda()
@@ -223,10 +228,10 @@ def main():
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
-            best_model_file = args.experiment + "/model_best.pth"
+            best_model_file = args.experiment + "/" + args.model_name + "_best.pth"
             torch.save(model.state_dict(), best_model_file)
         # also save the model every epoch
-        model_file = args.experiment + "/model_" + str(epoch) + ".pth"
+        model_file = args.experiment + "/" + args.model_name + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
         print(
             "Saved model to "
