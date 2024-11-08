@@ -42,7 +42,7 @@ class Resnet_based(nn.Module):
 class SketchClassifier(nn.Module):
     def __init__(self, feature_extractor_path):
         super(SketchClassifier, self).__init__()
-        self.feature_extractor = torch.load(feature_extractor_path)
+        self.feature_extractor = torch.load(feature_extractor_path, map_location='cpu')
         # Our classifier model
         self.fc1 = nn.Linear(2048, 512)  # Input size is 2048 from ResNet-50's feature map
         self.relu = nn.ReLU()
