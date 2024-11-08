@@ -194,7 +194,7 @@ def main():
         os.makedirs(args.experiment)
 
     # load model and transform
-    model, data_transforms = ModelFactory(args.model_name, args.feature_extractor_path).get_all()
+    model, data_transforms = ModelFactory(args.model_name, args.feature_extractor_path, use_cuda).get_all()
     if use_cuda:
         print("Using GPU")
         model.cuda()

@@ -6,9 +6,10 @@ from torchvision import models
 import torch
 
 class ModelFactory:
-    def __init__(self, model_name, feature_extractor_path=None):
+    def __init__(self, model_name, feature_extractor_path=None, use_cuda=True):
         self.model_name = model_name
         self.feature_extractor_path = feature_extractor_path
+        self.use_cuda = use_cuda
         self.model = self.init_model()
         self.transform = self.init_transform()
 
@@ -20,7 +21,11 @@ class ModelFactory:
         elif self.model_name == "sketch_classifier":
             # Load the pre-trained ResNet-50 model structure
             resnet = models.resnet50()
-            resnet.load_state_dict(torch.load(self.feature_extractor_path))
+            if self.use_cuda:
+                map_location = lambda storage, loc: storage.cuda()
+            else:
+                map_location = 'cpu'
+            resnet.load_state_dict(torch.load(self.feature_extractor_path, map_location=map_location))
             # Remove the last layer
             feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
             return SketchClassifier(feature_extractor)
