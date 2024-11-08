@@ -44,7 +44,13 @@ class SketchClassifier(nn.Module):
         super(SketchClassifier, self).__init__()
         self.feature_extractor = feature_extractor
         # Our classifier model
-        self.fc1 = nn.Linear(feature_extractor.fc.in_features, 512)  # Input layer
+        # Determine the feature size by passing a dummy input through the feature extractor
+        with torch.no_grad():
+            dummy_input = torch.randn(1, 3, 224, 224)  # Example input (batch of 1, 3 channels, 224x224)
+            feature_dim = self.feature_extractor(dummy_input).view(1, -1).size(1)
+
+        # Define classifier layers based on computed feature dimension
+        self.fc1 = nn.Linear(feature_dim, 512)
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.5)   # Dropout for regularization
         self.fc2 = nn.Linear(512, nclasses)  # Output layer for class prediction
