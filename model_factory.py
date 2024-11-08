@@ -2,6 +2,8 @@
 
 from data import data_transforms, data_transforms_resnet
 from model import Net, Resnet_based, SketchClassifier
+from torchvision import models
+import torch
 
 class ModelFactory:
     def __init__(self, model_name, feature_extractor_path=None):
@@ -16,7 +18,12 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "sketch_classifier":
-            return SketchClassifier(self.feature_extractor_path)
+            # Load the pre-trained ResNet-50 model structure
+            resnet = models.resnet50()
+            resnet.load_state_dict(torch.load(self.feature_extractor_path))
+            # Remove the last layer
+            feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+            return SketchClassifier(feature_extractor)
         else:
             raise NotImplementedError("Model not implemented")
 
