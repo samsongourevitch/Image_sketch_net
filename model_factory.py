@@ -6,9 +6,9 @@ from model import Net, Resnet_based, SketchClassifier
 class ModelFactory:
     def __init__(self, model_name, feature_extractor_path=None):
         self.model_name = model_name
+        self.feature_extractor_path = feature_extractor_path
         self.model = self.init_model()
         self.transform = self.init_transform()
-        self.feature_extractor_path = feature_extractor_path
 
     def init_model(self):
         if self.model_name == "basic_cnn":
