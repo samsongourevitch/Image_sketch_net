@@ -49,6 +49,8 @@ class SketchClassifier(nn.Module):
             dummy_input = torch.randn(1, 3, 224, 224)  # Example input (batch of 1, 3 channels, 224x224)
             feature_dim = self.feature_extractor(dummy_input).view(1, -1).size(1)
 
+        print("Feature dimension:", feature_dim)
+
         # Define classifier layers based on computed feature dimension
         self.fc1 = nn.Linear(feature_dim, 512)
         self.relu = nn.ReLU()
