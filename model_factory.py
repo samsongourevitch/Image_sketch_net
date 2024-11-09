@@ -1,6 +1,6 @@
 """Python file to instantiate the model and the transform that goes with it."""
 
-from data import data_transforms, data_transforms_resnet
+from data import data_transforms, data_transforms_resnet, data_transforms_vit
 from model import Net, Resnet_based, SketchClassifier, ViT_based
 import torch
 
@@ -42,6 +42,8 @@ class ModelFactory:
             return data_transforms_resnet
         elif self.model_name == "sketch_classifier":
             return data_transforms_resnet
+        elif self.model_name == "vit_based":
+            return data_transforms_vit
         else:
             raise NotImplementedError("Transform not implemented")
 
