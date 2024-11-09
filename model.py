@@ -2,6 +2,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 import torch
+import timm
 
 nclasses = 500
 
@@ -54,3 +55,16 @@ class SketchClassifier(nn.Module):
         x = self.dropout(x)
         x = self.fc2(x)
         return x
+    
+class ViT_based(nn.Module):
+    def __init__(self):
+        super(ViT_based, self).__init__()
+        
+        # Load a pre-trained Vision Transformer model
+        self.model = timm.create_model('vit_base_patch16_224', pretrained=True)
+        
+        # Replace the final fully connected layer for the specific number of classes
+        self.model.head = nn.Linear(self.model.head.in_features, nclasses)
+        
+    def forward(self, x):
+        return self.model(x)

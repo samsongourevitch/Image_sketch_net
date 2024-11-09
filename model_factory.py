@@ -1,7 +1,7 @@
 """Python file to instantiate the model and the transform that goes with it."""
 
 from data import data_transforms, data_transforms_resnet
-from model import Net, Resnet_based, SketchClassifier
+from model import Net, Resnet_based, SketchClassifier, ViT_based
 import torch
 
 class ModelFactory:
@@ -30,6 +30,8 @@ class ModelFactory:
             # for param in feature_extractor.parameters():
             #     param.requires_grad = False
             return SketchClassifier(2048)
+        elif self.model_name == "vit_based":
+            return ViT_based()
         else:
             raise NotImplementedError("Model not implemented")
 

@@ -249,7 +249,8 @@ def main():
     )
 
     # Setup optimizer
-    optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    # optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
 
     model.to(device)
 
@@ -259,7 +260,7 @@ def main():
         # training loop
         train(model, optimizer, train_loader, use_cuda, epoch, device, args, feature_extractor)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda, args, device, feature_extractor)
+        val_loss = validation(model, val_loader, use_cuda, args, feature_extractor, device)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
