@@ -29,7 +29,7 @@ class ModelFactory:
             # feature_extractor = torch.nn.Sequential(*(list(model.children())[:-1]))
             # for param in feature_extractor.parameters():
             #     param.requires_grad = False
-            return SketchClassifier()
+            return SketchClassifier(2048)
         else:
             raise NotImplementedError("Model not implemented")
 
