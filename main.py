@@ -195,6 +195,8 @@ def main():
     # options
     args = opts()
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     # Check if cuda is available
     use_cuda = torch.cuda.is_available()
 
@@ -229,6 +231,8 @@ def main():
 
     # Setup optimizer
     optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+
+    model.to(device)
 
     # Loop over the epochs
     best_val_loss = 1e8
