@@ -95,6 +95,7 @@ def train(
     use_cuda: bool,
     epoch: int,
     args: argparse.ArgumentParser,
+    feature_extractor: nn.Module,
 ) -> None:
     """Default Training Loop.
 
@@ -112,10 +113,6 @@ def train(
         if use_cuda:
             data, target = data.cuda(), target.cuda()
         if args.model_name == "sketch_classifier":
-            resnet = models.resnet50(pretrained=True)
-            feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
-            for param in feature_extractor.parameters():
-                param.requires_grad = False
             feature_extractor.eval()
             with torch.no_grad():
                 features = feature_extractor(data)
@@ -153,6 +150,9 @@ def validation(
     model: nn.Module,
     val_loader: torch.utils.data.DataLoader,
     use_cuda: bool,
+    args: argparse.ArgumentParser,
+    feature_extractor: nn.Module,
+    device: torch.device,
 ) -> float:
     """Default Validation Loop.
 
@@ -170,7 +170,17 @@ def validation(
     for data, target in val_loader:
         if use_cuda:
             data, target = data.cuda(), target.cuda()
-        output = model(data)
+        if args.model_name == "sketch_classifier":
+            for param in feature_extractor.parameters():
+                param.requires_grad = False
+            feature_extractor.to(device)
+            feature_extractor.eval()
+            with torch.no_grad():
+                features = feature_extractor(data)
+                features = features.view(features.size(0), -1)
+            output = model(features)
+        else:
+            output = model(data)
         # sum up batch loss
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         validation_loss += criterion(output, target).data.item()
@@ -209,6 +219,13 @@ def main():
 
     # load model and transform
     model, data_transforms = ModelFactory(args.model_name, use_cuda).get_all()
+    if args.model_name == "sketch_classifier":
+        resnet = models.resnet50(pretrained=True)
+        feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+        for param in feature_extractor.parameters():
+            param.requires_grad = False
+        feature_extractor.to(device)
+        feature_extractor.eval()
     if use_cuda:
         print("Using GPU")
         model.cuda()
@@ -238,9 +255,9 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        train(model, optimizer, train_loader, use_cuda, epoch, args)
+        train(model, optimizer, train_loader, use_cuda, epoch, args, device, feature_extractor)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda)
+        val_loss = validation(model, val_loader, use_cuda, args, device, feature_extractor)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
