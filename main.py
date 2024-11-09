@@ -94,6 +94,7 @@ def train(
     train_loader: torch.utils.data.DataLoader,
     use_cuda: bool,
     epoch: int,
+    device: torch.device,
     args: argparse.ArgumentParser,
     feature_extractor: nn.Module,
 ) -> None:
@@ -114,6 +115,7 @@ def train(
             data, target = data.cuda(), target.cuda()
         if args.model_name == "sketch_classifier":
             feature_extractor.eval()
+            feature_extractor.to(device)
             with torch.no_grad():
                 features = feature_extractor(data)
                 features = features.view(features.size(0), -1)
