@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets
+from torchvision import models
 
 from model_factory import ModelFactory
 
@@ -110,8 +111,18 @@ def train(
     for batch_idx, (data, target) in enumerate(train_loader):
         if use_cuda:
             data, target = data.cuda(), target.cuda()
+        if args.model_name == "sketch_classifier":
+            resnet = models.resnet50(pretrained=True)
+            feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
+            for param in feature_extractor.parameters():
+                param.requires_grad = False
+            feature_extractor.eval()
+            with torch.no_grad():
+                features = feature_extractor.model(data)
+            output = model(features)
+        else:
+            output = model(data)
         optimizer.zero_grad()
-        output = model(data)
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         loss = criterion(output, target)
         loss.backward()
@@ -194,7 +205,7 @@ def main():
         os.makedirs(args.experiment)
 
     # load model and transform
-    model, data_transforms = ModelFactory(args.model_name, args.feature_extractor_path, use_cuda).get_all()
+    model, data_transforms = ModelFactory(args.model_name, use_cuda).get_all()
     if use_cuda:
         print("Using GPU")
         model.cuda()

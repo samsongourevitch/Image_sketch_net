@@ -40,31 +40,17 @@ class Resnet_based(nn.Module):
         return self.model(x)
     
 class SketchClassifier(nn.Module):
-    def __init__(self, feature_extractor):
+    def __init__(self, feature_dim):
         super(SketchClassifier, self).__init__()
-        self.feature_extractor = feature_extractor
-        for param in self.feature_extractor.parameters():
-            param.requires_grad = False
-        # Our classifier model
-        # Determine the feature size by passing a dummy input through the feature extractor
-        with torch.no_grad():
-            dummy_input = torch.randn(1, 3, 224, 224)  # Example input (batch of 1, 3 channels, 224x224)
-            feature_dim = self.feature_extractor(dummy_input).view(1, -1).size(1)
-
-        print("Feature dimension:", feature_dim)
-
         # Define classifier layers based on computed feature dimension
         self.fc1 = nn.Linear(feature_dim, 512)
         self.relu = nn.ReLU()
-        # self.dropout = nn.Dropout(0.5)   # Dropout for regularization
+        self.dropout = nn.Dropout(0.5)   # Dropout for regularization
         self.fc2 = nn.Linear(512, nclasses)  # Output layer for class prediction
 
     def forward(self, x):
-        with torch.no_grad():
-            x = self.feature_extractor(x)
-        x = x.view(x.size(0), -1)  # Flatten the feature map from ResNet
         x = self.fc1(x)
         x = self.relu(x)
-        # x = self.dropout(x)
+        x = self.dropout(x)
         x = self.fc2(x)
         return x
