@@ -257,7 +257,7 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        train(model, optimizer, train_loader, use_cuda, epoch, args, device, feature_extractor)
+        train(model, optimizer, train_loader, use_cuda, epoch, device, args, feature_extractor)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda, args, device, feature_extractor)
         if val_loss < best_val_loss:
