@@ -118,7 +118,7 @@ def train(
                 param.requires_grad = False
             feature_extractor.eval()
             with torch.no_grad():
-                features = feature_extractor.model(data)
+                features = feature_extractor(data)
             output = model(features)
         else:
             output = model(data)
