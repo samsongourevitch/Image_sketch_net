@@ -153,8 +153,7 @@ def validation(
     val_loader: torch.utils.data.DataLoader,
     use_cuda: bool,
     args: argparse.ArgumentParser,
-    feature_extractor: nn.Module,
-    device: torch.device,
+    feature_extractor = None,
 ) -> float:
     """Default Validation Loop.
 
@@ -175,7 +174,6 @@ def validation(
         if args.model_name == "sketch_classifier":
             for param in feature_extractor.parameters():
                 param.requires_grad = False
-            feature_extractor.to(device)
             feature_extractor.eval()
             with torch.no_grad():
                 features = feature_extractor(data)
@@ -260,7 +258,7 @@ def main():
         # training loop
         train(model, optimizer, train_loader, use_cuda, epoch, device, args)
         # validation loop
-        val_loss = validation(model, val_loader, use_cuda, args, feature_extractor, device)
+        val_loss = validation(model, val_loader, use_cuda, args)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
