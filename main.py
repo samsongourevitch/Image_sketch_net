@@ -96,7 +96,7 @@ def train(
     epoch: int,
     device: torch.device,
     args: argparse.ArgumentParser,
-    feature_extractor: nn.Module,
+    feature_extractor = None,
 ) -> None:
     """Default Training Loop.
 
