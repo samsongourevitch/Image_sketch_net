@@ -104,7 +104,7 @@ def train(
     device: torch.device,
     args: argparse.ArgumentParser,
     feature_extractor = None,
-) -> None:
+) -> float:
     """Default Training Loop.
 
     Args:
@@ -117,6 +117,7 @@ def train(
     """
     model.train()
     correct = 0
+    train_loss = 0
     for batch_idx, (data, target) in enumerate(train_loader):
         if use_cuda:
             data, target = data.cuda(), target.cuda()
@@ -132,6 +133,7 @@ def train(
         optimizer.zero_grad()
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         loss = criterion(output, target)
+        train_loss += loss.data.item()
         loss.backward()
         optimizer.step()
         pred = output.data.max(1, keepdim=True)[1]
@@ -146,6 +148,7 @@ def train(
                     loss.data.item(),
                 )
             )
+    train_loss /= len(train_loader.dataset)
     print(
         "\nTrain set: Accuracy: {}/{} ({:.0f}%)\n".format(
             correct,
@@ -153,6 +156,7 @@ def train(
             100.0 * correct / len(train_loader.dataset),
         )
     )
+    return train_loss
 
 
 def validation(
@@ -259,13 +263,18 @@ def main():
 
     model.to(device)
 
+    train_losses = []
+    val_losses = []
+
     # Loop over the epochs
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        train(model, optimizer, train_loader, use_cuda, epoch, device, args)
+        train_loss = train(model, optimizer, train_loader, use_cuda, epoch, device, args)
+        train_losses.append(train_loss)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda, args)
+        val_losses.append(val_loss)
         if val_loss < best_val_loss:
             # save the best model for validation
             best_val_loss = val_loss
@@ -281,6 +290,13 @@ def main():
             + best_model_file
             + "` to generate the Kaggle formatted csv file\n"
         )
+    # save the training and validation loss
+    with open(args.experiment + "/" + args.model_name + "_train_losses.txt", "w") as f:
+        for item in train_losses:
+            f.write("%s\n" % item)
+    with open(args.experiment + "/" + args.model_name + "_val_losses.txt", "w") as f:
+        for item in val_losses:
+            f.write("%s\n" % item)
 
 
 if __name__ == "__main__":
