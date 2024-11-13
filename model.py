@@ -96,3 +96,15 @@ class SimCLR(nn.Module):
         with torch.no_grad():
             h = self.model(x)
         return self.fc(h)
+    
+class EfficientNet_based(nn.Module):
+    def __init__(self):
+        super(EfficientNet_based, self).__init__()
+        
+        # Load a pre-trained EfficientNet model
+        self.model = models.efficientnet_b7(pretrained=True)
+
+        self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, nclasses)
+        
+    def forward(self, x):
+        return self.model(x)
