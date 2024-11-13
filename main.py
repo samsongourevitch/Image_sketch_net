@@ -263,7 +263,6 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
-        val_loss = validation(model, val_loader, use_cuda, args)
         train(model, optimizer, train_loader, use_cuda, epoch, device, args)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda, args)
