@@ -178,16 +178,13 @@ def validation(
     for data, target in val_loader:
         if use_cuda:
             data, target = data.cuda(), target.cuda()
-        if args.model_name == "sketch_classifier":
-            for param in feature_extractor.parameters():
-                param.requires_grad = False
-            feature_extractor.eval()
-            with torch.no_grad():
-                features = feature_extractor(data)
-                features = features.view(features.size(0), -1)
-            output = model(features)
-        else:
-            output = model(data)
+        # if args.model_name == "sketch_classifier":
+        #     feature_extractor.eval()
+        #     with torch.no_grad():
+        #         features = feature_extractor(data)
+        #         features = features.view(features.size(0), -1)
+        #     output = model(features)
+        output = model(data)
         # sum up batch loss
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         validation_loss += criterion(output, target).data.item()
@@ -265,6 +262,7 @@ def main():
     best_val_loss = 1e8
     for epoch in range(1, args.epochs + 1):
         # training loop
+        val_loss = validation(model, val_loader, use_cuda, args)
         train(model, optimizer, train_loader, use_cuda, epoch, device, args)
         # validation loop
         val_loss = validation(model, val_loader, use_cuda, args)
