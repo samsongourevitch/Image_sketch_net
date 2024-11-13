@@ -184,7 +184,8 @@ def validation(
         #         features = feature_extractor(data)
         #         features = features.view(features.size(0), -1)
         #     output = model(features)
-        output = model(data)
+        with torch.no_grad():
+            output = model(data)
         # sum up batch loss
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         validation_loss += criterion(output, target).data.item()
