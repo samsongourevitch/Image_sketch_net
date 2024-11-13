@@ -1,7 +1,7 @@
 """Python file to instantiate the model and the transform that goes with it."""
 
 from data import data_transforms, data_transforms_resnet, data_transforms_vit
-from model import Net, Resnet_based, SketchClassifier, ViT_based
+from model import Net, Resnet_based, SketchClassifier, ViT_based, SimCLR, Resnet101_based
 import torch
 
 class ModelFactory:
@@ -17,6 +17,8 @@ class ModelFactory:
             return Net()
         elif self.model_name == "resnet_based":
             return Resnet_based()
+        elif self.model_name == "resnet101_based":
+            return Resnet101_based()
         elif self.model_name == "sketch_classifier":
             # # Load the pre-trained ResNet-50 model structure
             # model = Resnet_based()
@@ -32,18 +34,22 @@ class ModelFactory:
             return SketchClassifier(2048)
         elif self.model_name == "vit_based":
             return ViT_based()
+        elif self.model_name == "simclr":
+            return SimCLR()
         else:
             raise NotImplementedError("Model not implemented")
 
     def init_transform(self):
         if self.model_name == "basic_cnn":
             return data_transforms
-        elif self.model_name == "resnet_based":
+        elif self.model_name == "resnet_based" or self.model_name == "resnet101_based":
             return data_transforms_resnet
         elif self.model_name == "sketch_classifier":
             return data_transforms_resnet
         elif self.model_name == "vit_based":
             return data_transforms_vit
+        elif self.model_name == "simclr":
+            return data_transforms_resnet
         else:
             raise NotImplementedError("Transform not implemented")
 

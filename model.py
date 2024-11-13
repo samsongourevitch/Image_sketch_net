@@ -3,6 +3,7 @@ import torch.nn.functional as F
 from torchvision import models
 import torch
 import timm
+import lightly
 
 nclasses = 500
 
@@ -30,6 +31,22 @@ class Resnet_based(nn.Module):
         
         # Load a pre-trained ResNet-50 model
         self.model = models.resnet50(weights='ResNet50_Weights.DEFAULT')
+
+        # for param in list(self.model.parameters())[:-2]:
+        #     param.requires_grad = False
+        
+        # Replace the final fully connected layer for the specific number of classes
+        self.model.fc = nn.Linear(self.model.fc.in_features, nclasses)
+        
+    def forward(self, x):
+        return self.model(x)
+    
+class Resnet101_based(nn.Module):
+    def __init__(self):
+        super(Resnet101_based, self).__init__()
+        
+        # Load a pre-trained ResNet-101 model
+        self.model = models.resnet101(weights='ResNet101_Weights.DEFAULT')
 
         # for param in list(self.model.parameters())[:-2]:
         #     param.requires_grad = False
@@ -68,3 +85,14 @@ class ViT_based(nn.Module):
         
     def forward(self, x):
         return self.model(x)
+    
+class SimCLR(nn.Module):
+    def __init__(self):
+        super(SimCLR, self).__init__()
+        self.model = lightly.models.SimCLR(pretrained=True, base_model='resnet-50')
+        self.model.fc = nn.Linear(self.model.fc.in_features, nclasses)
+
+    def forward(self, x):
+        with torch.no_grad():
+            h = self.model(x)
+        return self.fc(h)

@@ -42,6 +42,13 @@ def opts() -> argparse.ArgumentParser:
         help="number of epochs to train (default: 10)",
     )
     parser.add_argument(
+        "--optimizer",
+        type=str,
+        default="SGD",
+        metavar="OPT",
+        help="optimizer to use (default: SGD)",
+    )
+    parser.add_argument(
         "--lr",
         type=float,
         default=0.1,
@@ -247,8 +254,10 @@ def main():
     )
 
     # Setup optimizer
-    # optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
-    optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
+    if args.optimizer == "SGD":
+        optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
+    elif args.optimizer == "Adam":
+        optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-4)
 
     model.to(device)
 
