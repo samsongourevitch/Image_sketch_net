@@ -5,8 +5,9 @@ from model import Net, Resnet_based, SketchClassifier, ViT_based, SimCLR, Resnet
 import torch
 
 class ModelFactory:
-    def __init__(self, model_name, feature_extractor_path=None, use_cuda=True):
+    def __init__(self, model_name, feature_extractor_path=None, load_model=None, use_cuda=True):
         self.model_name = model_name
+        self.load_model = load_model
         self.feature_extractor_path = feature_extractor_path
         self.use_cuda = use_cuda
         self.model = self.init_model()
@@ -18,7 +19,12 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "resnet101_based":
-            return Resnet101_based()
+            if self.load_model != None:
+                model = Resnet101_based()
+                model.load_state_dict(torch.load(self.load_model))
+                return model
+            else :
+                return Resnet101_based()
         elif self.model_name == "sketch_classifier":
             # # Load the pre-trained ResNet-50 model structure
             # model = Resnet_based()
