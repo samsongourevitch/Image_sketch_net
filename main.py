@@ -303,6 +303,8 @@ def main():
         for item in val_losses:
             f.write("%s\n" % item)
 
+    print("Saved train losses to " + args.experiment + "/" + args.model_name + "_train_losses.txt")
+    print("Saved validation losses to " + args.experiment + "/" + args.model_name + "_val_losses.txt")
 
 if __name__ == "__main__":
     main()
