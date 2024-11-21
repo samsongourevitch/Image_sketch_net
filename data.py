@@ -14,14 +14,22 @@ data_transforms = transforms.Compose(
 data_transforms_resnet = transforms.Compose(
     [
     transforms.Resize((224, 224)),               
-    transforms.RandomHorizontalFlip(p=0.5),       
-    transforms.RandomRotation(degrees=10),      
-    transforms.ColorJitter(brightness=0.2,      
-                           contrast=0.2,
-                           saturation=0.2,
-                           hue=0.1),
     transforms.ToTensor(),                        
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ]
+)
+
+data_aug_resnet = transforms.Compose(
+    [
+        transforms.Resize((224, 224)),
+        transforms.RandomHorizontalFlip(p=0.5),       
+        transforms.RandomRotation(degrees=10),      
+        transforms.ColorJitter(brightness=0.2,      
+                            contrast=0.2,
+                            saturation=0.2,
+                            hue=0.1),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ]
 )
 
@@ -44,26 +52,19 @@ data_transforms_efficientnet_b7 = transforms.Compose([
 ])
 
 tta_transforms = [
-    transforms.Compose([
-        transforms.Resize(600),
-        transforms.CenterCrop(512),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ]),
-    transforms.Compose([
-        transforms.Resize(600),
-        transforms.RandomHorizontalFlip(p=1.0),  # Full flip
-        transforms.CenterCrop(512),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ]),
-    transforms.Compose([
-        transforms.Resize(600),
-        transforms.RandomRotation(degrees=15),  # Rotate up to 15 degrees
-        transforms.CenterCrop(512),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ]),
+        data_transforms_resnet,
+        transforms.Compose([
+            transforms.RandomHorizontalFlip(p=1.0),
+            data_transforms_resnet,
+        ]),
+        transforms.Compose([
+            transforms.RandomRotation(degrees=15),
+            data_transforms_resnet,
+        ]),
+        transforms.Compose([
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+            data_transforms_resnet,
+        ])
 ]
 
 
