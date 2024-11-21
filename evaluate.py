@@ -7,6 +7,9 @@ from tqdm import tqdm
 
 from model_factory import ModelFactory
 
+from data import tta_transforms
+from main import tta_inference
+
 
 def opts() -> argparse.ArgumentParser:
     """Option Handling Function."""
@@ -38,6 +41,13 @@ def opts() -> argparse.ArgumentParser:
         metavar="D",
         help="name of the output csv file",
     )
+    parser.add_argument(
+        "--use_tta",
+        type=str,
+        default="False",
+        metavar="TTA",
+        help="Use Test Time Augmentation",
+    )
     args = parser.parse_args()
     return args
 
@@ -58,6 +68,8 @@ def main() -> None:
     # cuda
     use_cuda = torch.cuda.is_available()
 
+    device = torch.device("cuda" if use_cuda else "cpu")
+
     # load model and transform
     state_dict = torch.load(args.model)
     model, data_transforms = ModelFactory(args.model_name).get_all()
@@ -73,11 +85,15 @@ def main() -> None:
     output_file.write("Id,Category\n")
     for f in tqdm(os.listdir(test_dir)):
         if "jpeg" in f:
-            data = data_transforms(pil_loader(test_dir + "/" + f))
-            data = data.view(1, data.size(0), data.size(1), data.size(2))
-            if use_cuda:
-                data = data.cuda()
-            output = model(data)
+            if args.use_tta=="True":
+                image = pil_loader(os.path.join(test_dir, f))
+                output = tta_inference(model, image, tta_transforms, device)
+            else :
+                data = data_transforms(pil_loader(test_dir + "/" + f))
+                data = data.view(1, data.size(0), data.size(1), data.size(2))
+                if use_cuda:
+                    data = data.cuda()
+                output = model(data)
             pred = output.data.max(1, keepdim=True)[1]
             output_file.write("%s,%d\n" % (f[:-5], pred))
 

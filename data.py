@@ -43,4 +43,34 @@ data_transforms_efficientnet_b7 = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
+tta_transforms = [
+    transforms.Compose([
+        transforms.Resize(600),
+        transforms.CenterCrop(512),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ]),
+    transforms.Compose([
+        transforms.Resize(600),
+        transforms.RandomHorizontalFlip(p=1.0),  # Full flip
+        transforms.CenterCrop(512),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ]),
+    transforms.Compose([
+        transforms.Resize(600),
+        transforms.RandomRotation(degrees=15),  # Rotate up to 15 degrees
+        transforms.CenterCrop(512),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ]),
+]
+
+
+
+
+
+
+
+
 

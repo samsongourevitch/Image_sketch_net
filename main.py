@@ -213,6 +213,31 @@ def validation(
     )
     return validation_loss
 
+# Function to perform TTA
+def tta_inference(model, image, tta_transforms, device):
+    """
+    Perform TTA on a single image.
+    
+    Args:
+    - model: Pretrained model.
+    - image: Input PIL Image.
+    - tta_transforms: List of augmentations to apply.
+    - device: 'cuda' or 'cpu'.
+    
+    Returns:
+    - Final averaged prediction for the image.
+    """
+    predictions = []
+    with torch.no_grad():
+        for transform in tta_transforms:
+            augmented_image = transform(image).unsqueeze(0).to(device)  # Add batch dimension
+            pred = model(augmented_image)
+            predictions.append(pred)
+    
+    # Average predictions
+    final_prediction = torch.mean(torch.stack(predictions), dim=0)
+    return final_prediction
+
 
 def main():
     """Default Main Function."""
