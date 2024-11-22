@@ -8,6 +8,7 @@ import os
 
 nclasses = 500
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Net(nn.Module):
     def __init__(self):
@@ -122,7 +123,7 @@ class MetaModel(nn.Module):
         self.models = [Resnet_based(), Resnet101_based()]
         for i, model in enumerate(self.models):
             model.load_state_dict(self.state_dicts[i])
-        self.models.append(model)
+        self.models.append(model.to(device))
         
         for model in self.models:
             for param in model.parameters():
