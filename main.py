@@ -275,6 +275,10 @@ def main():
     # Data initialization and loading
     print("Loading data...")
     print("Train data directory: " + args.data + "/train_images")
+    # Check if the file args.data + "/train_images/" + "n0" exists
+    if not os.path.exists(args.data + "/train_images/" + "n04485082"):
+        print("Train data not found!")
+        return
     train_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
         batch_size=args.batch_size,
