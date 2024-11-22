@@ -137,6 +137,6 @@ class MetaModel(nn.Module):
             for model in self.models:
                 model.eval()
                 model.to(device)
-                outputs.append(model(x)).to(device)
+                outputs.append(model(x))
             outputs = torch.stack(outputs, dim=1)
         return self.fc(outputs)
