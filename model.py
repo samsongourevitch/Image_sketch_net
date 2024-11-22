@@ -128,7 +128,7 @@ class MetaModel(nn.Module):
             for param in model.parameters():
                 param.requires_grad = False
         
-        self.fc = nn.Linear(nclasses*len(models), nclasses)
+        self.fc = nn.Linear(nclasses*len(model_names), nclasses)
         
     def forward(self, x):
         outputs = []
