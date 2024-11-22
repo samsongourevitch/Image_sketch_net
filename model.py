@@ -114,22 +114,20 @@ class EfficientNet_based(nn.Module):
 class MetaModel(nn.Module):
     def __init__(self, load_models):
         super(MetaModel, self).__init__()
-        self.state_dicts = []
-        for model in load_models:
-            self.state_dicts.append(torch.load(model))
-        model_names = []
-        for load_model in load_models:
-            model_names.append(os.path.basename(load_model).replace("_best.pth", ""))
-        self.models = [Resnet_based(), Resnet101_based()]
-        for i, model in enumerate(self.models):
-            model.load_state_dict(self.state_dicts[i])
-        self.models.append(model.to(device))
+        self.models = []
+        self.model_1 = Resnet_based()
+        self.model_2 = Resnet101_based()
+
+        self.model_1.load_state_dict(torch.load(load_models[0]))
+        self.model_2.load_state_dict(torch.load(load_models[1]))
+
+        self.models = [self.model_1, self.model_2]
         
         for model in self.models:
             for param in model.parameters():
                 param.requires_grad = False
         
-        self.fc = nn.Linear(nclasses*len(model_names), nclasses)
+        self.fc = nn.Linear(nclasses*len(self.models), nclasses)
         
     def forward(self, x):
         outputs = []
