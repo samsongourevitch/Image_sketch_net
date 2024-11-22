@@ -19,7 +19,7 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "resnet101_based":
-            if self.load_model != None:
+            if self.load_models != None:
                 model = Resnet101_based()
                 model.load_state_dict(torch.load(self.load_model))
                 return model
