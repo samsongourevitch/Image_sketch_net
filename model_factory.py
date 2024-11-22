@@ -19,12 +19,12 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "resnet101_based":
-            if self.load_models != None:
-                model = Resnet101_based()
-                model.load_state_dict(torch.load(self.load_model))
-                return model
-            else :
-                return Resnet101_based()
+            # if self.load_models != None:
+            #     model = Resnet101_based()
+            #     model.load_state_dict(torch.load(self.load_model))
+            #     return model
+            # else :
+            return Resnet101_based()
         elif self.model_name == "sketch_classifier":
             # # Load the pre-trained ResNet-50 model structure
             # model = Resnet_based()
