@@ -136,7 +136,6 @@ class MetaModel(nn.Module):
                 model.eval()
                 model.to(device)
                 outputs.append(model(x))
-                print(model(x).shape)
             stacked_outputs = torch.stack(outputs, dim=2)
         meta_input = stacked_outputs.view(stacked_outputs.size(0), -1)
         return self.fc(meta_input)
