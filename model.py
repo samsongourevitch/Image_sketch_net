@@ -4,7 +4,6 @@ from torchvision import models
 import torch
 import timm
 import lightly
-from model_factory import ModelFactory
 import os
 
 nclasses = 500
@@ -120,11 +119,10 @@ class MetaModel(nn.Module):
         model_names = []
         for load_model in load_models:
             model_names.append(os.path.basename(load_model).replace("_best.pth", ""))
-        self.models = []
-        for i, state_dict in enumerate(self.state_dicts):
-            model = ModelFactory(model_names[i]).model
-            model.load_state_dict(state_dict)
-            self.models.append(model)
+        self.models = [Resnet_based(), Resnet101_based()]
+        for i, model in enumerate(self.models):
+            model.load_state_dict(self.state_dicts[i])
+        self.models.append(model)
         
         for model in self.models:
             for param in model.parameters():
