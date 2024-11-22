@@ -97,6 +97,11 @@ def opts() -> argparse.ArgumentParser:
         nargs='+',  # Allows one or more arguments for this option
         help="List of model paths to process"
     )
+    parser.add_argument(
+        "--train_all",
+        action="store_true",
+        help="Train all epochs without validation",
+    )
     args = parser.parse_args()
     return args
 
@@ -279,18 +284,37 @@ def main():
     if not os.path.exists(args.data + "/train_images/" + "n04485082"):
         print("Train data not found!")
         return
-    train_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
-        batch_size=args.batch_size,
-        shuffle=True,
-        num_workers=args.num_workers,
-    )
-    val_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(args.data + "/val_images", transform=data_transforms),
-        batch_size=args.batch_size,
-        shuffle=False,
-        num_workers=args.num_workers,
-    )
+    if args.train_all:
+        print("Training on all available data (train + val)")
+        # Combine train and validation datasets
+        train_data = datasets.ImageFolder(args.data + "/train_images", transform=data_transforms)
+        val_data = datasets.ImageFolder(args.data + "/val_images", transform=data_transforms)
+        combined_data = torch.utils.data.ConcatDataset([train_data, val_data])
+
+        # Use combined data for training
+        train_loader = torch.utils.data.DataLoader(
+            combined_data,
+            batch_size=args.batch_size,
+            shuffle=True,
+            num_workers=args.num_workers,
+        )
+
+        # Validation loader is not used in this case
+        val_loader = None
+    else:
+        print("Using separate train and validation datasets")
+        train_loader = torch.utils.data.DataLoader(
+            datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
+            batch_size=args.batch_size,
+            shuffle=True,
+            num_workers=args.num_workers,
+        )
+        val_loader = torch.utils.data.DataLoader(
+            datasets.ImageFolder(args.data + "/val_images", transform=data_transforms),
+            batch_size=args.batch_size,
+            shuffle=False,
+            num_workers=args.num_workers,
+        )
 
     # Setup optimizer
     if args.optimizer == "SGD":
@@ -309,16 +333,20 @@ def main():
         # training loop
         train_loss = train(model, optimizer, train_loader, use_cuda, epoch, device, args)
         train_losses.append(train_loss)
-        # validation loop
-        val_loss = validation(model, val_loader, use_cuda, args)
-        val_losses.append(val_loss)
-        if val_loss < best_val_loss:
-            # save the best model for validation
-            best_val_loss = val_loss
-            best_model_file = args.experiment + "/" + args.model_name + "_best.pth"
-            torch.save(model.state_dict(), best_model_file)
+        if not args.train_all:
+            # validation loop
+            val_loss = validation(model, val_loader, use_cuda, args)
+            val_losses.append(val_loss)
+            if val_loss < best_val_loss:
+                # save the best model for validation
+                best_val_loss = val_loss
+                best_model_file = args.experiment + "/" + args.model_name + "_best.pth"
+                torch.save(model.state_dict(), best_model_file)
         # also save the model every epoch
-        model_file = args.experiment + "/" + args.model_name + str(epoch) + ".pth"
+        if args.train_all:
+            model_file = args.experiment + "/" + args.model_name + str(epoch) + "train_all.pth"
+        else:
+            model_file = args.experiment + "/" + args.model_name + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
         print(
             "Saved model to "
@@ -331,9 +359,11 @@ def main():
     with open(args.experiment + "/" + args.model_name + "_train_losses.txt", "w") as f:
         for item in train_losses:
             f.write("%s\n" % item)
-    with open(args.experiment + "/" + args.model_name + "_val_losses.txt", "w") as f:
-        for item in val_losses:
-            f.write("%s\n" % item)
+
+    if not args.train_all:
+        with open(args.experiment + "/" + args.model_name + "_val_losses.txt", "w") as f:
+            for item in val_losses:
+                f.write("%s\n" % item)
 
     print("Saved train losses to " + args.experiment + "/" + args.model_name + "_train_losses.txt")
     print("Saved validation losses to " + args.experiment + "/" + args.model_name + "_val_losses.txt")
