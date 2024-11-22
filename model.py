@@ -135,6 +135,8 @@ class MetaModel(nn.Module):
         outputs = []
         with torch.no_grad():
             for model in self.models:
-                outputs.append(model(x))
+                model.eval()
+                model.to(device)
+                outputs.append(model(x)).to(device)
             outputs = torch.stack(outputs, dim=1)
         return self.fc(outputs)
