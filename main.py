@@ -258,7 +258,7 @@ def main():
         os.makedirs(args.experiment)
 
     # load model and transform
-    model, data_transforms = ModelFactory(args.model_name, load_model=args.load_models).get_all()
+    model, data_transforms = ModelFactory(args.model_name, load_models=args.load_models).get_all()
     if args.model_name == "sketch_classifier":
         resnet = models.resnet50(pretrained=True)
         feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))
