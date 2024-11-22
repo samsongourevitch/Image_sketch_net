@@ -273,6 +273,8 @@ def main():
         print("Using CPU")
 
     # Data initialization and loading
+    print("Loading data...")
+    print("Train data directory: " + args.data + "/train_images")
     train_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(args.data + "/train_images", transform=data_transforms),
         batch_size=args.batch_size,
