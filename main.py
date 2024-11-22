@@ -92,9 +92,10 @@ def opts() -> argparse.ArgumentParser:
         help="model usinng to extract features",
     )
     parser.add_argument(
-        "--load_model",
-        default=None,
-        help="model to load",
+        "--load_models", 
+        type=str, 
+        nargs='+',  # Allows one or more arguments for this option
+        help="List of model paths to process"
     )
     args = parser.parse_args()
     return args
@@ -257,7 +258,7 @@ def main():
         os.makedirs(args.experiment)
 
     # load model and transform
-    model, data_transforms = ModelFactory(args.model_name, load_model=args.load_model).get_all()
+    model, data_transforms = ModelFactory(args.model_name, load_model=args.load_models).get_all()
     if args.model_name == "sketch_classifier":
         resnet = models.resnet50(pretrained=True)
         feature_extractor = torch.nn.Sequential(*(list(resnet.children())[:-1]))

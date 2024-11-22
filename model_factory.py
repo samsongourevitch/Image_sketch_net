@@ -1,13 +1,13 @@
 """Python file to instantiate the model and the transform that goes with it."""
 
 from data import data_transforms, data_transforms_resnet, data_transforms_vit
-from model import Net, Resnet_based, SketchClassifier, ViT_based, SimCLR, Resnet101_based, EfficientNet_based
+from model import Net, Resnet_based, SketchClassifier, ViT_based, SimCLR, Resnet101_based, EfficientNet_based, MetaModel
 import torch
 
 class ModelFactory:
-    def __init__(self, model_name, feature_extractor_path=None, load_model=None, use_cuda=True):
+    def __init__(self, model_name, feature_extractor_path=None, load_models=None, use_cuda=True):
         self.model_name = model_name
-        self.load_model = load_model
+        self.load_models = load_models
         self.feature_extractor_path = feature_extractor_path
         self.use_cuda = use_cuda
         self.model = self.init_model()
@@ -44,6 +44,8 @@ class ModelFactory:
             return SimCLR()
         elif self.model_name == "efficientnet_based":
             return EfficientNet_based()
+        elif self.model_name == "meta_model":
+            return MetaModel(self.load_models)
         else:
             raise NotImplementedError("Model not implemented")
 
@@ -57,6 +59,8 @@ class ModelFactory:
         elif self.model_name == "vit_based":
             return data_transforms_vit
         elif self.model_name == "simclr":
+            return data_transforms_resnet
+        elif self.model_name == "meta_model":
             return data_transforms_resnet
         else:
             raise NotImplementedError("Transform not implemented")

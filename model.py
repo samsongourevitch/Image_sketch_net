@@ -4,6 +4,8 @@ from torchvision import models
 import torch
 import timm
 import lightly
+from model_factory import ModelFactory
+import os
 
 nclasses = 500
 
@@ -108,3 +110,32 @@ class EfficientNet_based(nn.Module):
         
     def forward(self, x):
         return self.model(x)
+    
+class MetaModel(nn.Module):
+    def __init__(self, load_models):
+        super(MetaModel, self).__init__()
+        self.state_dicts = []
+        for model in load_models:
+            self.state_dicts.append(torch.load(model))
+        model_names = []
+        for load_model in load_models:
+            model_names.append(os.path.basename(load_model).replace("_best.pth", ""))
+        self.models = []
+        for i, state_dict in enumerate(self.state_dicts):
+            model = ModelFactory(model_names[i]).model
+            model.load_state_dict(state_dict)
+            self.models.append(model)
+        
+        for model in self.models:
+            for param in model.parameters():
+                param.requires_grad = False
+        
+        self.fc = nn.Linear(nclasses*len(models), nclasses)
+        
+    def forward(self, x):
+        outputs = []
+        with torch.no_grad():
+            for model in self.models:
+                outputs.append(model(x))
+            outputs = torch.stack(outputs, dim=1)
+        return self.fc(outputs)
