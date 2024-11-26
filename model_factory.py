@@ -19,24 +19,8 @@ class ModelFactory:
         elif self.model_name == "resnet_based":
             return Resnet_based()
         elif self.model_name == "resnet101_based":
-            # if self.load_models != None:
-            #     model = Resnet101_based()
-            #     model.load_state_dict(torch.load(self.load_model))
-            #     return model
-            # else :
             return Resnet101_based()
         elif self.model_name == "sketch_classifier":
-            # # Load the pre-trained ResNet-50 model structure
-            # model = Resnet_based()
-            # if self.use_cuda:
-            #     map_location = lambda storage, loc: storage.cuda()
-            # else:
-            #     map_location = 'cpu'
-            # model.load_state_dict(torch.load(self.feature_extractor_path, map_location=map_location))
-            # # Remove the last layer
-            # feature_extractor = torch.nn.Sequential(*(list(model.children())[:-1]))
-            # for param in feature_extractor.parameters():
-            #     param.requires_grad = False
             return SketchClassifier(2048)
         elif self.model_name == "vit_based":
             return ViT_based()
