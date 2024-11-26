@@ -193,14 +193,15 @@ def validation(
     for data, target in val_loader:
         if use_cuda:
             data, target = data.cuda(), target.cuda()
-        # if args.model_name == "sketch_classifier":
-        #     feature_extractor.eval()
-        #     with torch.no_grad():
-        #         features = feature_extractor(data)
-        #         features = features.view(features.size(0), -1)
-        #     output = model(features)
-        with torch.no_grad():
-            output = model(data)
+        if args.model_name == "sketch_classifier":
+            feature_extractor.eval()
+            with torch.no_grad():
+                features = feature_extractor(data)
+                features = features.view(features.size(0), -1)
+            output = model(features)
+        else:
+            with torch.no_grad():
+                output = model(data)
         # sum up batch loss
         criterion = torch.nn.CrossEntropyLoss(reduction="mean")
         validation_loss += criterion(output, target).data.item()
@@ -283,7 +284,7 @@ def main():
 
     if args.model_name == "efficientnet_based":
         args.batch_size = max(1, args.batch_size // 2)
-        
+
     if args.train_all:
         print("Training on all available data (train + val)")
         # Combine train and validation datasets
