@@ -104,7 +104,7 @@ class EfficientNet_based(nn.Module):
         super(EfficientNet_based, self).__init__()
         
         # Load a pre-trained EfficientNet model
-        self.model = models.efficientnet_b7(pretrained=True)
+        self.model = models.efficientnet_b7(weights='EfficientNet_B7_Weights.DEFAULT')
 
         self.model.classifier[1] = nn.Linear(self.model.classifier[1].in_features, nclasses)
         

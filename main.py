@@ -280,10 +280,10 @@ def main():
     # Data initialization and loading
     print("Loading data...")
     print("Train data directory: " + args.data + "/train_images")
-    # Check if the file args.data + "/train_images/" + "n0" exists
-    if not os.path.exists(args.data + "/train_images/" + "n04485082"):
-        print("Train data not found!")
-        return
+
+    if args.model_name == "efficientnet_based":
+        args.batch_size = max(1, args.batch_size // 2)
+        
     if args.train_all:
         print("Training on all available data (train + val)")
         # Combine train and validation datasets
