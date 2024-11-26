@@ -43,7 +43,7 @@ data_transforms_vit = transforms.Compose(
 )
 
 data_transforms_efficientnet = transforms.Compose([
-    transforms.Resize(380),
+    transforms.Resize((380, 380)),
     # transforms.RandomHorizontalFlip(p=0.5),
     # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
     # transforms.RandomRotation(degrees=30),
