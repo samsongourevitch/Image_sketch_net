@@ -348,13 +348,14 @@ def main():
         else:
             model_file = args.experiment + "/" + args.model_name + str(epoch) + ".pth"
         torch.save(model.state_dict(), model_file)
-        # print(
-        #     "Saved model to "
-        #     + model_file
-        #     + f". You can run `python evaluate.py --model_name {args.model_name} --model "
-        #     + best_model_file
-        #     + "` to generate the Kaggle formatted csv file\n"
-        # )
+        if not args.train_all:
+            print(
+                "Saved model to "
+                + model_file
+                + f". You can run `python evaluate.py --model_name {args.model_name} --model "
+                + best_model_file
+                + "` to generate the Kaggle formatted csv file\n"
+            )
     # save the training and validation loss
     with open(args.experiment + "/" + args.model_name + "_train_losses.txt", "w") as f:
         for item in train_losses:
