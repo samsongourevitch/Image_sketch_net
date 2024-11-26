@@ -44,9 +44,9 @@ data_transforms_vit = transforms.Compose(
 
 data_transforms_efficientnet_b7 = transforms.Compose([
     transforms.RandomResizedCrop(size=600),
-    transforms.RandomHorizontalFlip(p=0.5),
-    transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
-    transforms.RandomRotation(degrees=30),
+    # transforms.RandomHorizontalFlip(p=0.5),
+    # transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.1),
+    # transforms.RandomRotation(degrees=30),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])

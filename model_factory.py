@@ -1,6 +1,6 @@
 """Python file to instantiate the model and the transform that goes with it."""
 
-from data import data_transforms, data_transforms_resnet, data_transforms_vit
+from data import data_transforms, data_transforms_resnet, data_transforms_vit, data_transforms_efficientnet_b7
 from model import Net, Resnet_based, SketchClassifier, ViT_based, SimCLR, Resnet101_based, EfficientNet_based, MetaModel
 import torch
 
@@ -60,6 +60,8 @@ class ModelFactory:
             return data_transforms_vit
         elif self.model_name == "simclr":
             return data_transforms_resnet
+        elif self.model_name == "efficientnet_based":
+            return data_transforms_efficientnet_b7
         elif self.model_name == "meta_model":
             return data_transforms_resnet
         else:
